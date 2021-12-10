@@ -7,6 +7,37 @@ By: Juan Sebastian Molina
 
 Consta de 3 Niveles los cuales fueron expuestos mediante APIRest, la información de satelites y mensajes fue persistida en MongoDB.
 
+# Despliegue
+
+Se maneja Build automático mediante Acciones de GitHub, el cual obtiene el artefacto (Imagen Docker) de la aplicación y se publica a la nube de Docker mediante Docker Hub, posteriormente en una instancia EC2 de AWS, se ejecuta un docker-compose (disponible en el repositorio), el cual ejecuta las imagenes para el despliegue de la aplicación.
+
+```YML
+version: '3.1'
+
+services:
+  melimongo:
+    image: mongo
+    container_name: "melimongo"
+    ports:
+      - 27017:27017
+  mongo-express:
+    links:
+      - melimongo
+    image: mongo-express
+    restart: always
+    ports:
+      - 8081:8081
+    environment:
+      - ME_CONFIG_MONGODB_URL= "mongodb://melimongo:27017"
+  operacion-fuego-quasar:
+    image: sebas170/operacion-fuego-quasar:1.0
+    container_name: "operacion-fuego-quasar"
+    ports:
+      - 8090:8090
+    links:
+      - melimongo
+```
+
 # Nivel 1
 Definición de los métodos GetLocation y GetMessage
 
