@@ -9,7 +9,7 @@ Consta de 3 Niveles los cuales fueron expuestos mediante APIRest, la informació
 
 # Despliegue
 
-Se maneja Build automático mediante Acciones de GitHub, el cual obtiene el artefacto (Imagen Docker) de la aplicación y se publica a la nube de Docker mediante Docker Hub, posteriormente en una instancia EC2 de AWS, se ejecuta un docker-compose (disponible en el repositorio), el cual ejecuta las imagenes para el despliegue de la aplicación.
+Se maneja Build automático mediante Acciones de GitHub, el cual obtiene el artefacto (Imagen Docker) de la aplicación y se publica a la nube de Docker mediante Docker Hub, posteriormente en una instancia EC2 de AWS, se ejecuta (de forma manual) un docker-compose, el cual descarga y ejecuta las imagenes para el despliegue de la aplicación, asegurándose así siempre tener la ultima versión de la aplicación.
 
 ```YML
 version: '3.1'
@@ -52,7 +52,7 @@ http://ec2-18-224-18-153.us-east-2.compute.amazonaws.com:8090/swagger-ui/index.h
 
 http://ec2-18-224-18-153.us-east-2.compute.amazonaws.com:8081/
 
-# Servicios expuestos mediante APIRest
+# Consumo de los servicios expuestos
 
 POST ec2-18-224-18-153.us-east-2.compute.amazonaws.com:8090/topsecret/
 
