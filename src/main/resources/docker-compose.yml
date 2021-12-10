@@ -16,7 +16,7 @@ services:
     environment:
       - ME_CONFIG_MONGODB_URL= "mongodb://melimongo:27017"
   operacion-fuego-quasar:
-    image: operacion-fuego-quasar:1.0
+    image: sebas170/operacion-fuego-quasar:1.0
     container_name: "operacion-fuego-quasar"
     ports:
       - 8090:8090
