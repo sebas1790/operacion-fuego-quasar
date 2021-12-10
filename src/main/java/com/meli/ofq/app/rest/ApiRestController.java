@@ -28,19 +28,19 @@ public class ApiRestController {
 	private static final Logger LOG = LoggerFactory.getLogger(ApiRestController.class);
 
 	@Autowired
-	private SateliteService sateliteService;
+	private SateliteService sateliteService; // Servicio de control de satelites
 
 	@Autowired
-	private MessageRequestService messageRequestService;
+	private MessageRequestService messageRequestService; // Servicio de control de mensajes
 
 	@Autowired
-	private FuegoQuasar fuegoQuasarUseCase;
+	private FuegoQuasar fuegoQuasarUseCase; // Caso de uso con los metodos de calculos y obtencion de mensaje
 
 	@PostMapping("/topsecret/")
 	public ResponseEntity<MessageResponse> topsecret(@RequestBody SateliteRequest request) {
 
 		List<MessageRequest> detalleSatelite = request.getSatellites();
-		List<SateliteInformacion> sateliteXdetalle = new ArrayList<>();
+		List<SateliteInformacion> sateliteXdetalle = new ArrayList<>(); // Relacion entre satelites y mensajes
 
 		detalleSatelite.forEach((p) -> {
 			validSaveMessageRequest(p);
@@ -49,7 +49,7 @@ public class ApiRestController {
 		});
 
 		if (sateliteXdetalle.size() != 3) {
-			return ResponseEntity.notFound().build();
+			return ResponseEntity.notFound().build(); // No hay suficiente informacion para el calculo 404
 		}
 
 		return obtenerRespuesta(sateliteXdetalle);
@@ -60,7 +60,7 @@ public class ApiRestController {
 			@RequestBody MessageRequest request) {
 
 		if (sateliteService.findByName(satellite_name.toLowerCase()) == null) {
-			return ResponseEntity.notFound().build(); // Satelite no existe
+			return ResponseEntity.notFound().build(); // Satelite no existe 404
 		}
 		
 		request.setName(satellite_name.toLowerCase());
@@ -88,6 +88,11 @@ public class ApiRestController {
 		return obtenerRespuesta(sateliteXdetalle);
 	}
 	
+	/**
+	 * 
+	 * @param messageRequest
+	 * Recibe un mensaje recibido por algun satelite, valida si el mensaje ya existe en la DB y lo reemplaza por el nuevo
+	 */
 	private void validSaveMessageRequest(MessageRequest messageRequest) {
 		if (messageRequestService.findByName(messageRequest.getName().toLowerCase()) != null) {
 			messageRequestService.delete(messageRequestService.findByName(messageRequest.getName().toLowerCase()));
@@ -95,12 +100,20 @@ public class ApiRestController {
 		messageRequestService.save(messageRequest);
 	}
 	
+	/**
+	 * 
+	 * @param sateliteXdetalle
+	 * @return ResponseEntity
+	 * 
+	 * Metodo que realiza el llamado a los Casos de uso para obtener la informacion procesada de acuerdo a la necesidad
+	 * En caso de no obtener alguno de los dos valores, retorna un 404
+	 */
 	private ResponseEntity<MessageResponse> obtenerRespuesta(List<SateliteInformacion> sateliteXdetalle) {
 		Position posFinal = fuegoQuasarUseCase.getLocation(sateliteXdetalle);
 		String msgFinal = fuegoQuasarUseCase.getMessage(sateliteXdetalle);
 
 		if (msgFinal == null || posFinal == null) {
-			return ResponseEntity.notFound().build();
+			return ResponseEntity.notFound().build(); // No es posible determinar la pos o el msg - 404
 		}
 
 		return ResponseEntity.ok().body(MessageResponse.builder().position(posFinal).message(msgFinal).build());

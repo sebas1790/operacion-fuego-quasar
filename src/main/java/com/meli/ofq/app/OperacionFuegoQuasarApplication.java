@@ -25,9 +25,10 @@ public class OperacionFuegoQuasarApplication implements CommandLineRunner {
 
 	@Override
 	public void run(String... args) throws Exception {
-		mongoTemplate.dropCollection("satelites");
+		mongoTemplate.dropCollection("satelites"); // Limpiar los registros en cada arranque de la aplicacion 
 		mongoTemplate.dropCollection("entradas");
 		
+		// Datos predefinidos de los satelites existentes
 		sateliteService.save(Satelite.builder().name("kenobi").position(Position.builder().x(-500.00).y(-200.00).build()).build());
 		sateliteService.save(Satelite.builder().name("skywalker").position(Position.builder().x(100.00).y(-100.00).build()).build());
 		sateliteService.save(Satelite.builder().name("sato").position(Position.builder().x(500.00).y(100.00).build()).build());
