@@ -1,0 +1,6 @@
+spring:
+  data:
+    mongodb:
+      database: spring_boot
+      host: melimongo
+      port: 27017
